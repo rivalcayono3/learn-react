@@ -1,8 +1,8 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import CardProduct from "../components/fragments/CardProduct";
 import Button from "../components/elements/Button";
 
-const product = [
+const products = [
   {
     id: 1,
     title: "Sepatu Baru",
@@ -27,6 +27,9 @@ const product = [
 ];
 
 function ProductsPage() {
+  const [cart, setCart] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+
   const emailName = localStorage.getItem("email");
 
   const handleLogout = () => {
@@ -35,10 +38,23 @@ function ProductsPage() {
     window.location.href = "/login";
   };
 
-  const [cart, setCart] = useState([]);
+  useEffect(() => {
+    setCart(JSON.parse(localStorage.getItem("cart")) || []);
+  }, []);
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      const sumPrice = cart.reduce((acc, item) => {
+        const product = products.find((product) => product.id === item.id);
+        return acc + product.price * item.qty;
+      }, 0);
+      setTotalPrice(sumPrice);
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+  }, [cart]);
 
   const handleAddCart = (id) => {
-    const productItem = product.find((product) => product.id === id);
+    const productItem = products.find((product) => product.id === id);
 
     if (cart.find((item) => item.id === id)) {
       setCart(cart.map((item) => (item.id === id ? { ...item, qty: item.qty + 1 } : item)));
@@ -55,7 +71,7 @@ function ProductsPage() {
       </nav>
       <div className="flex justify-center py-6">
         <div className="flex flex-wrap justify-center w-4/6 gap-6">
-          {product.map((product) => (
+          {products.map((product) => (
             <CardProduct key={product.id}>
               <CardProduct.Header image={product.image} />
               <CardProduct.Body title={product.title}>{product.description}</CardProduct.Body>
@@ -76,7 +92,7 @@ function ProductsPage() {
             </thead>
             <tbody>
               {cart.map((item) => {
-                const productItem = product.find((product) => product.id === item.id);
+                const productItem = products.find((product) => product.id === item.id);
                 return (
                   <tr key={item.id}>
                     <td>{productItem.title}</td>
@@ -86,8 +102,20 @@ function ProductsPage() {
                   </tr>
                 );
               })}
+              <tr>
+                <td colSpan={3}>
+                  <b>Total Price</b>
+                </td>
+                <td>
+                  <b>{totalPrice.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</b>
+                </td>
+              </tr>
             </tbody>
           </table>
+          <video controls width="640" height="360">
+            <source src="/src/components/videomkv/360_VR.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
       </div>
     </Fragment>
