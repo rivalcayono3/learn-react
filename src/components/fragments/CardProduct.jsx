@@ -22,7 +22,7 @@ const Body = ({ title, children, ...props }) => {
     </div>
   );
 };
-const Footer = ({ price, handleAddToCart, id, ...props }) => {
+const Footer = ({ price, id, ...props }) => {
   const dispatch = useDispatch();
   return (
     <div className="flex items-center justify-between">
