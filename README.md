@@ -25,7 +25,7 @@ During this project, I've picked up important skills and a better understanding 
 
 ### Discovering State Management
 
-### `React Redux Toolkit`
+### React Redux Toolkit
 
 ### Custom Hooks
 
